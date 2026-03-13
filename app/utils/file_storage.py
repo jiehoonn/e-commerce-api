@@ -5,11 +5,11 @@ import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "..", "..", "data")
 
-filename = os.path.join(DATA_DIR, "users.json")
-
 # ================= HELPER FUNCTIONS =================
 
-def load_user_data():
+def load_data(datafile):
+    filename = os.path.join(DATA_DIR, datafile)
+
     try:
         os.makedirs(os.path.dirname(filename), exist_ok=True)
 
@@ -33,7 +33,9 @@ def load_user_data():
         print(f"An unexpected error occurred: {e}")
         return {}
     
-def write_user_data(data: dict):
+def write_data(data: dict, datafile):
+    filename = os.path.join(DATA_DIR, datafile)
+
     try:
         with open(filename, mode='w', encoding='utf-8') as f:
             json.dump(data, f, indent=4)

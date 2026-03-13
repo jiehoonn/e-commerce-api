@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token
 
-from app.utils.file_storage import load_user_data, write_user_data
+from app.utils.file_storage import load_data, write_data
 
 import hashlib
 from datetime import datetime, timezone
@@ -41,6 +41,8 @@ auth_bp = Blueprint("auth", __name__)
 #     },
 # }
 
+datafile = "users.json"
+
 # POST /api/auth/register
 @auth_bp.route("/auth/register", methods=["POST"])
 def register_user():
@@ -51,7 +53,7 @@ def register_user():
     
     try:
         # Load the Data:
-        user_database = load_user_data()
+        user_database = load_data(datafile)
 
         # Find next available User ID:
         next_id = find_next_id(user_database)
@@ -68,7 +70,7 @@ def register_user():
             "createdAt": now
         }
 
-        write_user_data(user_database)
+        write_data(user_database, datafile)
         return jsonify(user_database[str(next_id)]), 201
     except Exception as e:
         return jsonify({"error": f"An unexpected error has occurred: {e}"}), 500
@@ -89,7 +91,7 @@ def login_user():
     
     try:
         # 3. load users from file
-        users_data = load_user_data()
+        users_data = load_data(datafile)
     
         # 4. find the user by username
         found_user = None
